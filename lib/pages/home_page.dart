@@ -82,6 +82,7 @@ class _HomePageState extends State<HomePage> {
             future: _determinePosition(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
+                log('${snapshot.data?.latitude}, ${snapshot.data?.longitude}');
                 return Text(
                     '${snapshot.data?.latitude}, ${snapshot.data?.longitude}');
               } else {
