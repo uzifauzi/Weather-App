@@ -6,12 +6,6 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:weather_app/core/network/dio_config.dart';
-import 'package:weather_app/cubit/weather_cubit.dart';
-import 'package:weather_app/data/data_sources/weather_data_source.dart';
-import 'package:weather_app/data/repositories/weather_repository_impl.dart';
-import 'package:weather_app/domain/repositories/weather_repository.dart';
-import 'package:weather_app/domain/usecases/get_location_usecase.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -23,11 +17,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   Position? position;
   Placemark? placemark;
-  
-  final remoteDataSource = WeatherDataSourceImpl(dio);
-  final weatherRepository = WeatherRepositoryImpl(remoteDataSource);
-  final getLocationUseCase = GetLocationUseCase(weatherRepository);
-  final weatherCubit = WeatherCubit(getLocationUseCase);
 
   Future<void> geocoding(double latitude, double longitude) async {
     List<Placemark> placemarks =

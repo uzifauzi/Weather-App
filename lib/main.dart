@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:weather_app/core/injection/injection.dart';
 import 'package:weather_app/pages/home_page.dart';
 
 void main() {
+  init();
   runApp(const MyApp());
 }
 

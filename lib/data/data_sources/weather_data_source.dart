@@ -14,11 +14,11 @@ class WeatherDataSourceImpl implements WeatherDataSource {
   WeatherDataSourceImpl(this.dio);
 
   @override
-  Future<LocationEntity> getLocation(LocationBody body) async {
+  Future<LocationEntity> getLocation(LocationBody params) async {
     try {
       final response = await dio.get(
       '/locations/v1/cities/geoposition/search',
-      queryParameters: body.toJson(),
+      queryParameters: params.toJson(),
     );
     return LocationModel.fromJson(response as Map<String, dynamic>);
     } on DioError catch(e) {
