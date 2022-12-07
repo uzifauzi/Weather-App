@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:weather_app/core/network/dio_config.dart';
 import 'package:weather_app/data/models/location_body.dart';
@@ -17,13 +19,14 @@ class WeatherDataSourceImpl implements WeatherDataSource {
   Future<LocationEntity> getLocation(LocationBody params) async {
     try {
       final response = await dio.get(
-      '/locations/v1/cities/geoposition/search',
-      queryParameters: params.toJson(),
-    );
-    return LocationModel.fromJson(response as Map<String, dynamic>);
-    } on DioError catch(e) {
-      if (e.response!= null) {
-        print(e.response?.statusCode);
+        '/locations/v1/cities/geoposition/search',
+        queryParameters: params.toJson(),
+      );
+      log(response.toString());
+      return LocationModel.fromJson(response.data as Map<String, dynamic>);
+    } on DioError catch (e) {
+      if (e.response != null) {
+        log('${e.response?.statusCode}');
       }
       throw Exception(e.response);
     }

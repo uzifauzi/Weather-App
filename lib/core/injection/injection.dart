@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:weather_app/core/network/dio_config.dart';
 import 'package:weather_app/cubit/weather_cubit.dart';
 import 'package:weather_app/data/data_sources/weather_data_source.dart';
 import 'package:weather_app/data/repositories/weather_repository_impl.dart';
@@ -12,4 +13,5 @@ Future<void> init() async {
   di.registerFactory(() => GetLocationUseCase(di()));
   di.registerFactory<WeatherRepository>(() => WeatherRepositoryImpl(di()));
   di.registerFactory<WeatherDataSource>(() => WeatherDataSourceImpl(di()));
+  di.registerLazySingleton(() => dio);
 }

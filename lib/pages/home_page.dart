@@ -4,11 +4,15 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:weather_app/core/constants/key_constant.dart';
+import 'package:weather_app/core/injection/injection.dart';
 import 'package:weather_app/core/network/dio_config.dart';
 import 'package:weather_app/cubit/weather_cubit.dart';
 import 'package:weather_app/data/data_sources/weather_data_source.dart';
+import 'package:weather_app/data/models/location_body.dart';
 import 'package:weather_app/data/repositories/weather_repository_impl.dart';
 import 'package:weather_app/domain/repositories/weather_repository.dart';
 import 'package:weather_app/domain/usecases/get_location_usecase.dart';
@@ -23,11 +27,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   Position? position;
   Placemark? placemark;
-  
-  final remoteDataSource = WeatherDataSourceImpl(dio);
-  final weatherRepository = WeatherRepositoryImpl(remoteDataSource);
-  final getLocationUseCase = GetLocationUseCase(weatherRepository);
-  final weatherCubit = WeatherCubit(getLocationUseCase);
+  final weatherCubit = di<WeatherCubit>();
 
   Future<void> geocoding(double latitude, double longitude) async {
     List<Placemark> placemarks =
@@ -83,40 +83,31 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Column(
-        children: [
-          //Text('${position?.latitude}, ${position?.longitude}'),
-          //Text('${placemark?.subLocality}'),
-          FutureBuilder(
-            future: _determinePosition(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                log('${snapshot.data?.latitude}, ${snapshot.data?.longitude}');
-                return Text(
-                    '${snapshot.data?.latitude}, ${snapshot.data?.longitude}');
-              } else {
-                return CircularProgressIndicator();
+    return BlocProvider<WeatherCubit>(
+      create: (context) => weatherCubit,
+      child: Scaffold(
+        appBar: AppBar(),
+        body: Center(
+          child: BlocBuilder<WeatherCubit, WeatherState>(
+            builder: (context, state) {
+              if (state is WeatherSuccess) {
+                return Text(state.response.parentCity.localizedName);
               }
+              if (state is WeatherLoading) {
+                return const CircularProgressIndicator();
+              }
+              return const SizedBox();
             },
           ),
-          ElevatedButton(
-            onPressed: () async {
-              // position = await _determinePosition();
-
-              // log('${position?.latitude}, ${position?.longitude}');
-              // geocoding();
-
-              // setState(() {});
-
-              await _determinePosition().then(
-                (value) => geocoding(value.latitude, value.longitude),
-              );
-            },
-            child: Text('data'),
-          )
-        ],
+        ),
+        floatingActionButton: FloatingActionButton(onPressed: () async {
+          await _determinePosition().then((value) {
+            var locationBody = LocationBody(
+                apikey: KeyConstant.apiKey,
+                q: '${value.latitude},${value.longitude}');
+            return weatherCubit.getLocation(locationBody);
+          });
+        }),
       ),
     );
   }
