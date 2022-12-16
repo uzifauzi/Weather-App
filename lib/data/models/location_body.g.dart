@@ -8,6 +8,5 @@ part of 'location_body.dart';
 
 Map<String, dynamic> _$LocationBodyToJson(LocationBody instance) =>
     <String, dynamic>{
-      'apikey': instance.apikey,
       'q': instance.q,
     };

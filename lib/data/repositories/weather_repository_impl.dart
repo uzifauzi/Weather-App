@@ -6,6 +6,7 @@ import 'package:weather_app/data/models/location_model.dart';
 import 'package:weather_app/data/models/location_body.dart';
 import 'package:weather_app/data/models/default_model.dart';
 import 'package:dartz/dartz.dart';
+import 'package:weather_app/domain/entities/current_weather_entity.dart';
 import 'package:weather_app/domain/entities/location_entity.dart';
 import 'package:weather_app/domain/repositories/weather_repository.dart';
 
@@ -19,6 +20,16 @@ class WeatherRepositoryImpl extends WeatherRepository {
     try {
       final getLocation = await remoteDataSource.getLocation(params);
       return Right(getLocation);
+    } on DioError catch(e){
+      return Left(DefaultModel.fromJson(e.response!.data));
+    }
+  }
+
+  @override
+  Future<Either<DefaultModel, CurrentWeatherEntity>> getCurrentWeather(String locationKey) async {
+    try {
+      final getCurrentWeather = await remoteDataSource.getCurrentWeather(locationKey);
+      return Right(getCurrentWeather);
     } on DioError catch(e){
       return Left(DefaultModel.fromJson(e.response!.data));
     }

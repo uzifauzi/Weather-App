@@ -10,7 +10,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:weather_app/core/constants/key_constant.dart';
 import 'package:weather_app/core/injection/injection.dart';
 import 'package:weather_app/core/network/dio_config.dart';
-import 'package:weather_app/cubit/weather_cubit.dart';
+import 'package:weather_app/cubit/location_cubit.dart';
 import 'package:weather_app/data/data_sources/weather_data_source.dart';
 import 'package:weather_app/data/models/location_body.dart';
 import 'package:weather_app/data/repositories/weather_repository_impl.dart';
@@ -103,7 +103,7 @@ class _HomePageState extends State<HomePage> {
         floatingActionButton: FloatingActionButton(onPressed: () async {
           await _determinePosition().then((value) {
             var locationBody = LocationBody(
-                apikey: KeyConstant.apiKey,
+          
                 q: '${value.latitude},${value.longitude}');
             return weatherCubit.getLocation(locationBody);
           });
